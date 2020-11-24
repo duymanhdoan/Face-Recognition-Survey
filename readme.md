@@ -22,5 +22,5 @@ Fi meaning activation of fully-connected layer  with weight vector Wj & bias Bj.
 
 ### LMCL 
 - cos(thera1) - m > cos(thera(2) (where m > 0)
-![Formally]("formully LMCL.png")
+![Formally](/image/formully_LMCL.png)
 
