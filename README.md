@@ -13,6 +13,8 @@ objective: maximum discrimination by maximizing inter-class variance and minimiz
 ### Network
 Convnet lear a large cosine margin. 
 
+RESENET 64 layer. 
+
 ### Loss functions. 
 - rethinking the softmax loss from a cosine perspective. 
 Fi meaning activation of fully-connected layer  with weight vector Wj & bias Bj. 
@@ -116,8 +118,9 @@ hours of training = 18h. acc = 0.67, loss <7 && > 3.
                + ', m=' + str(self.m) + ')'                   
 ```
 
-# 				ARCFACE PAPER. 
+# 				SPHEREFACE PAPER. 
 
+objective: smaller maximal intra-class distance than minimal inter-class, base in softmax fomular with the angular softmax (A-softmax). 
 
 
 
