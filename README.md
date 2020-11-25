@@ -1,4 +1,4 @@
-# 		research_cosface paper
+# 		COSFACE PAPER
 objective: maximum discrimination by maximizing inter-class variance and minimizing intra-class variance
  
 ### Normalization Approaches. 
@@ -10,7 +10,7 @@ objective: maximum discrimination by maximizing inter-class variance and minimiz
 - feature vectors of the same class are grouped torgether and feature vectors of different classes are pulled apart on the hypersphere. 
 
 
-### network
+### Network
 Convnet lear a large cosine margin. 
 
 ### Loss functions. 
@@ -28,7 +28,7 @@ Fi meaning activation of fully-connected layer  with weight vector Wj & bias Bj.
 - cos(thera1) - m > cos(thera(2) (where m > 0)
 - with cos(theraj ,i) = Wj * xi. 
 - ![Formally](/image/formully_LMCL.png)
-### comparison on different loss function 
+### Comparison on different loss function 
 - SOFTMAX. 
 ![softmax](/image/softmax_cosface.png) 
 - NSL 
@@ -39,10 +39,10 @@ Fi meaning activation of fully-connected layer  with weight vector Wj & bias Bj.
 ![LMCL DEFINE] (/image/cosin_space.png)
 - comparison of loss functions. 
 ![4 loss functions](/image/comparison_of_different_lf.png)
-### visualization geometrical 
+### Visualization geometrical 
 - ![geometrical interpretation](/image/geometrical_cosface.png)
 
-### train model 
+### Train model 
 
 DATA = CASIA-0.49M with 10,575 subjects. 
 image_size = [112,112]  , (image RGB in [0,255] - 127,5) / 128
@@ -50,7 +50,7 @@ data augmentation [ horizontally flipped ].
 network: resenet 50 ( 64-layer CNN ). 
 s = 64 , margin_m = 0.35
 
-### testing data set 
+### Testing data set 
 
 DATA = lfw and ytf 13,233 image with 5749 identities. (99.73% on LFW and 97.6% in YTF)
 
@@ -115,6 +115,45 @@ hours of training = 18h. acc = 0.67, loss <7 && > 3.
                + ', s=' + str(self.s) \
                + ', m=' + str(self.m) + ')'                   
 ```
+
+# 				ARCFACE PAPER. 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
