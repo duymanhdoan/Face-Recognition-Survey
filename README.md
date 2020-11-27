@@ -46,8 +46,8 @@ Fi meaning activation of fully-connected layer  with weight vector Wj & bias Bj.
 
 ### Train model
 
-DATA = CASIA-0.49M with 10,575 subjects.
-image_size = [112,112]  , (image RGB in [0,255] - 127,5) / 128
+- DATA training is CASIA-0.49M with 10,575 subjects.
+- normalized image : image_size = [112,112]  , (image RGB in [0,255] - 127,5) / 128
 data augmentation [ horizontally flipped ].
 network: resenet 50 ( 64-layer CNN ).
 s = 64 , margin_m = 0.35
@@ -146,11 +146,119 @@ objective: smaller maximal intra-class distance than minimal inter-class, base i
 The biggest difference between A-Softmax and L-Softmax is that the weight of A-Softmax is normalized, while L-Softmax does not. The normalization of the weights of A-Softmax causes the points on the feature to be mapped to the unit hypersphere, while L-Softmax does not have this limitation. This feature makes the geometric interpretation of the two different. As shown in Figure 10, if the features of two categories are input in the same area during training, as shown in Figure 10 below. A-Softmax can only classify these two categories from an angle, that is to say, it only classifies from the direction, and the result of the classification is shown in Figure 11; while L-Softmax can not only distinguish the two categories from the angle, The two classes can also be distinguished from the weight modulus (length), and the classification result is shown in Figure 12. Under the condition of a fixed data set size, L-Softmax can be classified in two ways. Training may not make it separate in both the angle and length directions, resulting in its accuracy may not be as good as A-Softmax.
 ![figure 10](/image/image_10.png)
 ![figure 11](/image/image_11.png)
+## Training model
+- Face landmarks detected by MTCNN for face alignment.
+- image RGB is normalized by (pixel([0,255]) - 127.5) / 128
+- use Residual units in CNN architecture.  Depths ( 4, 10, 20, 36, 64)
+- training dataset CASIA-WebFace 0.49M. with 10.575 individuals.
+- Tesing from the output of the FC1 Layer. The score is computed by the cosine distance of two features. The nearest neighbor classifier and thresholding are used for face identification and verification.  
+
 ## experiments
 
 ![figure 5](/image/experiments.png)
 - compared accuracy between A-softmax and softmax
 ![image](/image/comapre_LFW_YTF.png)
 
+```
+class AngleLoss(nn.Module):
+    def __init__(self, gamma=0):
+        super(AngleLoss, self).__init__()
+        self.gamma   = gamma
+        self.it = 0
+        self.LambdaMin = 5.0
+        self.LambdaMax = 1500.0
+        self.lamb = 1500.0
+
+    def forward(self, input, target):
+        self.it += 1
+        cos_theta,phi_theta = input
+        target = target.view(-1,1) #size=(B,1)
+
+        index = cos_theta.data * 0.0 #size=(B,Classnum)
+        index.scatter_(1,target.data.view(-1,1),1)
+        index = index.byte()
+        index = Variable(index)
+
+        self.lamb = max(self.LambdaMin,self.LambdaMax/(1+0.1*self.it ))
+        output = cos_theta * 1.0 #size=(B,Classnum)
+        output[index] -= cos_theta[index]*(1.0+0)/(1+self.lamb)
+        output[index] += phi_theta[index]*(1.0+0)/(1+self.lamb)
+
+        logpt = F.log_softmax(output)
+        logpt = logpt.gather(1,target)
+        logpt = logpt.view(-1)
+        pt = Variable(logpt.data.exp())
+
+        loss = -1 * (1-pt)**self.gamma * logpt
+        loss = loss.mean()
+
+        return loss
+```
 
 #                     ARCFACE
+
+- objective: ArcFace has a clear geometric interpretation due to the exact correspondence to the geodesic distance on the hypersphere
+
+- formular arcface:
+![](/image/arcface_formular.png)
+- arcface when add angular space.
+![](/image/arcface.png)
+- Arcface boundary compare with other loss
+![compare](/image/boundary.png)
+
+- conclusion ArcFace
+![conclusion](/image/conclusion_arcface.png)
+
+### explain arcface vs cosface
+![arcface code](/image/arcface_code.png)
+- different between arcface and cosface only easy_margin, meaning when thera in [0,pi] thera is add margin_m but not
+ArcFace loss become cosface loss. So role ensure that theta + m are still in the monotonic range 0-pi
+```
+class Arcface(Module):
+    # implementation of additive margin softmax loss in https://arxiv.org/abs/1801.05599    
+    def __init__(self, embedding_size=512, classnum=51332,  s=64., m = 0.5):
+        super(Arcface, self).__init__()
+        self.classnum = classnum
+        self.kernel = Parameter(torch.Tensor(embedding_size, classnum))
+        # initial kernel
+Self.kernel.data.uniform_(-1, 1).renorm_(2, 1, 1e-5).mul_(1e5) #uniform_(-1, 1) Obey uniform distribution, and mul_ corresponds to the points multiplied
+        self.m = m # the margin value, default is 0.5
+        self.s = s # scalar value default is 64, see normface https://arxiv.org/abs/1704.06369
+        self.cos_m = math.cos(m)
+        self.sin_m = math.sin(m)
+        self.mm = self.sin_m * m  # issue 1
+        self.threshold = math.cos(math.pi - m)
+    def forward(self, embbedings, label):
+        # weights norm
+        nB = len(embbedings)
+        kernel_norm = l2_norm(self.kernel, axis=0)
+        # cos(theta+m)
+ Cos_theta = torch.mm(embbedings, kernel_norm)#Perform matrix multiplication
+#         output = torch.mm(embbedings,kernel_norm)
+        cos_theta = cos_theta.clamp(-1,1) # for numerical stability
+        cos_theta_2 = torch.pow(cos_theta, 2)
+        sin_theta_2 = 1 - cos_theta_2
+        sin_theta = torch.sqrt(sin_theta_2)
+        cos_theta_m = (cos_theta * self.cos_m - sin_theta * self.sin_m)
+        # this condition controls the theta+m should in range [0, pi]
+        #      0<=theta+m<=pi
+        #     -m<=theta<=pi-m
+        cond_v = cos_theta - self.threshold
+        cond_mask = cond_v <= 0
+        keep_val = (cos_theta - self.mm) # when theta not in [0,pi], use cosface instead
+        cos_theta_m[cond_mask] = keep_val[cond_mask]
+        output = cos_theta * 1.0 # a little bit hacky way to prevent in_place operation on cos_theta
+        idx_ = torch.arange(0, nB, dtype=torch.long)
+        output[idx_, label] = cos_theta_m[idx_, label]
+        output *= self.s # scale up in order to make softmax work, first introduced in normface
+        return output
+```
+
+### experiments in arcface
+- Table3 design results about comparative output layer. A represents Use global pooling layer (GP), B represents Use one fully connected (FC) layer after GP, C represents Use FC-Batch Normalisation (BN) after GP, D represents Use FC-BN-Parametric Rectified Linear Unit (PReLu) after GP, E represents Use BN-Dropout -FC-BN after the last convolutional layer. Comparative experiments last selected E.
+![network2](/image/network2.png)
+- Improved version of the residual block as shown in Figure7.
+![eresidual block](/image/addresidual.png)
+- Table8 results are different ArcFace algorithms, speed, size comparison model. Table9 face recognition algorithms is the result of several experimental comparison, the last two columns (R) representative of experiments done on the cleaned data set.
+
+![compared all network](/image/compare_network.png)
