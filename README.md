@@ -255,10 +255,15 @@ Self.kernel.data.uniform_(-1, 1).renorm_(2, 1, 1e-5).mul_(1e5) #uniform_(-1, 1) 
 ```
 
 ### experiments in arcface
-- Table3 design results about comparative output layer. A represents Use global pooling layer (GP), B represents Use one fully connected (FC) layer after GP, C represents Use FC-Batch Normalisation (BN) after GP, D represents Use FC-BN-Parametric Rectified Linear Unit (PReLu) after GP, E represents Use BN-Dropout -FC-BN after the last convolutional layer. Comparative experiments last selected E.
+- Table3 design results about comparative output layer. A represents Use global pooling layer (GP), B represents Use one fully connected (FC) layer after GP, C represents Use FC-Batch Normalization (BN) after GP, D represents Use FC-BN-Parametric Rectified Linear Unit (PReLu) after GP, E represents Use BN-Dropout -FC-BN after the last convolutional layer. Comparative experiments last selected E.
 ![network2](/image/network2.png)
 - Improved version of the residual block as shown in Figure7.
-![eresidual block](/image/addresidual.png)
+![residual block](/image/addresidual.png)
 - Table8 results are different ArcFace algorithms, speed, size comparison model. Table9 face recognition algorithms is the result of several experimental comparison, the last two columns (R) representative of experiments done on the cleaned data set.
 
 ![compared all network](/image/compare_network.png)
+
+
+# Distance Metrics in face recognition
+- objectives: distance metric helps algorithms to recognize similarities between the contents.
+![](/image/considering_cosin_similartor.png)
