@@ -147,4 +147,10 @@ The biggest difference between A-Softmax and L-Softmax is that the weight of A-S
 ![figure 10](/image/image_10.png)
 ![figure 11](/image/image_11.png)
 ## experiments
+
 ![figure 5](/image/experiments.png)
+- compared accuracy between A-softmax and softmax
+![image](/image/comapre_LFW_YTF.png)
+
+
+#                     ARCFACE
