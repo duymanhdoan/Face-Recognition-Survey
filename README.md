@@ -266,4 +266,20 @@ Self.kernel.data.uniform_(-1, 1).renorm_(2, 1, 1e-5).mul_(1e5) #uniform_(-1, 1) 
 
 # Distance Metrics in face recognition
 - objectives: distance metric helps algorithms to recognize similarities between the contents.
+![convolutional of face recognition](/image/convolusion_face_recognitions.png)
+
+
 ![](/image/considering_cosin_similartor.png)
+
+
+# Survay paper Deep Face Recognition
+
+1.  Topic on algorithms designs.
+2. summarize different network architectures and loss function .
+3. face processing methods are categorized into two classes: "one-to-many augmentation" and "many-to-one normalization".
+4. compare the commonly used databases for both model training and and evaluation.
+5. review miscellaneous scenes in deep FR (example: cross-factor, heterogenous, multiple-media and industrial scenes)
+6. technical challenges and several promising directions are highlighted.   
+
+
+## 1. Topic on algorithms design.
