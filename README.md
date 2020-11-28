@@ -274,12 +274,41 @@ Self.kernel.data.uniform_(-1, 1).renorm_(2, 1, 1e-5).mul_(1e5) #uniform_(-1, 1) 
 
 # Survay paper Deep Face Recognition
 
-1.  Topic on algorithms designs.
-2. summarize different network architectures and loss function .
-3. face processing methods are categorized into two classes: "one-to-many augmentation" and "many-to-one normalization".
-4. compare the commonly used databases for both model training and and evaluation.
-5. review miscellaneous scenes in deep FR (example: cross-factor, heterogenous, multiple-media and industrial scenes)
-6. technical challenges and several promising directions are highlighted.   
+1. summarize different network architectures and loss function .
+2. face processing methods are categorized into two classes: "one-to-many augmentation" and "many-to-one normalization".
+3. compare the commonly used databases for both model training and and evaluation.
+4. review miscellaneous scenes in deep FR (example: cross-factor, heterogenous, multiple-media and industrial scenes)
+5. technical challenges and several promising directions are highlighted.   
+
+### 1.Topic on algorithms design and network architecture
+![work workflow face recognition](/image/workflow_Face_recognitions.png)
 
 
-## 1. Topic on algorithms design.
+### Loss function learn "discriminative"
+![](/image/loss_function_work_flow.png)
+1. euclidean distance based loss.
+concept:
+
+- objective:  intra-variance is reduced and inter-variance is enlarged.
+- example: contrastive loss , triplet loss
+explain:
+- Contrary to contrastive loss that considers the absolute distances of the matching pairs and non-matching pairs, triplet loss considers the relative difference of the distances between them
+-  It requires the face triplets, and then it minimizes the distance between an anchor and a positive sample of the same identity and maximizes the distance between the anchor and a negative sample of a different indentity.
+advantages: However, the contrastive loss and triplet loss occasionally encounter training instability due to the selection of effective training samples
+
+2. angular/ cosine margin based loss
+concept: 
+- Angular/ cosin margin based loss is proposed to make learned features potentially separable with a larger angular/ cosine distance.
+-> arc, cos, sphere face .
+3.  Softmax Loss and its Variations
+- normalize the features and weights in loss functions to improve the model performance
+
+### Evolution of Network Architecture
+![architecture](/image/architechtures.png)
+
+### Face Matching by deep features
+1. Face verification: Metric learning , which aims to find a new metric to make two classes more separable
+
+2. Face identification
+
+### face processing for training recognition.
