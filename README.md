@@ -38,7 +38,7 @@ Fi meaning activation of fully-connected layer  with weight vector Wj & bias Bj.
 - A_softmax
 ![A- softmax](/image/A_softmax_cosface.png)
 - LMCL
-![LMCL DEFINE] (/image/cosin_space.png)
+![LMCL DEFINE](/image/cosin_space.png)
 - comparison of loss functions.
 ![4 loss functions](/image/comparison_of_different_lf.png)
 ### Visualization geometrical
@@ -297,7 +297,7 @@ explain:
 advantages: However, the contrastive loss and triplet loss occasionally encounter training instability due to the selection of effective training samples
 
 2. angular/ cosine margin based loss
-concept: 
+concept:
 - Angular/ cosin margin based loss is proposed to make learned features potentially separable with a larger angular/ cosine distance.
 -> arc, cos, sphere face .
 3.  Softmax Loss and its Variations
